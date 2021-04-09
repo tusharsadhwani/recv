@@ -2,7 +2,7 @@
 
 :root {
   /* Theme */
-  --bg-dark: #ad8bf1;
+  --bg-dark: #b696f5;
   --color-dark: #fff;
 
   --bg-light: #f0f0f0;
@@ -12,11 +12,11 @@
   --color: var(--color-light);
 
   /* Buttons */
-  --primary-color: #5351da;
-  --primary-hover: #422dff;
+  --primary-color: #5d5af0;
+  --primary-hover: #6c6ad1;
 
   --error-color: #df4848;
-  --error-hover: #dd6f6f;
+  --error-hover: #df5c5c;
 
   --btn-color: var(--primary-color);
   --hover-color: var(--primary-hover);
