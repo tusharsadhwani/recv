@@ -1,4 +1,26 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+:root {
+  /* Theme */
+  --bg-dark: #916ed8;
+  --color-dark: #fff;
+
+  --bg-light: #f0f0f0;
+  --color-light: #333;
+
+  --bg: var(--bg-light);
+  --color: var(--color-light);
+
+  /* Buttons */
+  --primary-color: #5351da;
+  --primary-hover: #422dff;
+
+  --error-color: #e92727;
+  --error-hover: #ff6464;
+
+  --btn-color: var(--primary-color);
+  --hover-color: var(--primary-hover);
+}
 
 *,
 *::before,
@@ -6,10 +28,62 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Open Sans';
 }
 
 html,
 body {
   height: 100%;
-  font-family: "Open Sans";
+}
+
+body {
+  text-align: center;
+  background-color: var(--bg);
+  color: var(--color);
+
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  font-size: 4rem;
+  font-weight: 300;
+  line-height: 1.25;
+}
+
+main {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  border: none;
+  font-size: 28px;
+  border-radius: 4px;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  color: white;
+  background-color: var(--btn-color);
+  box-shadow: 0 0 4px #999;
+  outline: none;
+}
+
+.ripple {
+  background-position: center;
+  transition: background 0.8s;
+}
+.ripple:hover {
+  background: var(--hover-color) radial-gradient(circle, transparent 1%, var(--hover-color) 1%) center/15000%;
+}
+.ripple:active {
+  background-color: #6eb9f7;
+  background-size: 100%;
+  transition: background 0s;
+}
+
+.error {
+  --btn-color: var(--error-color);
+  --hover-color: var(--error-hover);
 }
