@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gorilla/websocket"
@@ -17,6 +19,8 @@ var port = 8000
 var domain = fmt.Sprintf("localhost:%d", port)
 
 func main() {
+	fmt.Println("Connecting to recv.live...")
+
 	flag.Parse()
 	arg := flag.Arg(0)
 
@@ -36,16 +40,15 @@ func main() {
 		}
 	}
 
-	fmt.Println("Your Room code is:", roomCode)
 	conn := connect(roomCode)
 
+	fmt.Println("Your Room code is:", roomCode)
 	go readMessages(conn)
 
-	var name string
-
+	input := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Scanf("%s", &name)
-		err := conn.WriteMessage(websocket.TextMessage, []byte(name))
+		text, _ := input.ReadString('\n')
+		err := conn.WriteMessage(websocket.TextMessage, []byte(text))
 		if err != nil {
 			log.Fatal("error while writing to websocket:", err)
 		}
@@ -54,7 +57,6 @@ func main() {
 }
 
 func createRoom() int {
-	fmt.Println("Connecting to recv.live...")
 	url := fmt.Sprintf("%s://%s/connect", scheme, domain)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -88,6 +90,6 @@ func readMessages(conn *websocket.Conn) {
 		if err != nil {
 			log.Fatal("error while reading from websocket:", err)
 		}
-		fmt.Printf("%s\n\n", msg)
+		fmt.Printf("%s\n", msg)
 	}
 }
