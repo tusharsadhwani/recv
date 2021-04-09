@@ -52,7 +52,6 @@ func main() {
 		if err != nil {
 			log.Fatal("error while writing to websocket:", err)
 		}
-		fmt.Println()
 	}
 }
 
@@ -90,6 +89,6 @@ func readMessages(conn *websocket.Conn) {
 		if err != nil {
 			log.Fatal("error while reading from websocket:", err)
 		}
-		fmt.Printf("%s\n", msg)
+		fmt.Printf("%s", msg)
 	}
 }
