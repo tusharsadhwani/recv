@@ -3,6 +3,7 @@ package recv
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"sync"
@@ -15,27 +16,33 @@ type Room struct {
 	conns map[int]*websocket.Conn
 }
 
-var rooms = make(map[int]*Room)
-var channels = make(map[int]chan string)
-var counters = make(map[int]int)
+type RoomID = int
+
+var rooms = make(map[RoomID]*Room)
+var channels = make(map[RoomID]*chan string)
+var counters = make(map[RoomID]int)
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		return true //TODO: CORS
 	},
 }
 
-func RunServer() {
-	http.HandleFunc("/ws", handleConnections)
-
-	log.Println("http server started on :8000")
-	err := http.ListenAndServe(":8000", nil)
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+func HandleConnect(w http.ResponseWriter, r *http.Request) {
+	for {
+		roomCode := 10000 + rand.Intn(90000)
+		if rooms[roomCode] == nil {
+			rooms[roomCode] = &Room{conns: make(map[int]*websocket.Conn)}
+			channel := make(chan string)
+			channels[roomCode] = &channel
+			go handleRoom(roomCode)
+			w.Write([]byte(fmt.Sprint(roomCode)))
+			return
+		}
 	}
 }
 
-func handleConnections(w http.ResponseWriter, r *http.Request) {
+func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -45,59 +52,77 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	params, ok := r.URL.Query()["code"]
 
 	if !ok || len(params[0]) == 0 {
-		log.Println("Url Param 'code' is missing")
+		ws.WriteMessage(websocket.TextMessage, []byte("Url Param 'code' is missing"))
 		return
 	}
 	roomCodeStr := params[0]
 	roomCode, err := strconv.Atoi(roomCodeStr)
 	if err != nil {
-		ws.WriteMessage(0, []byte("Provide a 5 digit room code"))
+		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code"))
 		return
 	}
 	if len(roomCodeStr) != 5 {
-		ws.WriteMessage(0, []byte("Provide a 5 digit room code"))
+		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code"))
+		return
+	}
+	if rooms[roomCode] == nil {
+		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist"))
+		close(*channels[roomCode])
+		delete(rooms, roomCode)
+		delete(channels, roomCode)
+		return
+	}
+	if channels[roomCode] == nil {
+		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist"))
+		if rooms[roomCode] != nil {
+			for _, conn := range rooms[roomCode].conns {
+				conn.Close()
+			}
+		}
 		return
 	}
 
-	log.Println("Url Param 'roomCode' is: " + fmt.Sprint(roomCode))
-
 	counters[roomCode] += 1
 	userid := counters[roomCode]
-
-	if rooms[roomCode] == nil {
-		rooms[roomCode] = &Room{conns: make(map[int]*websocket.Conn)}
-	}
 	rooms[roomCode].conns[userid] = ws
-
-	if channels[roomCode] == nil {
-		channels[roomCode] = make(chan string)
-	}
-	go handleRoom(roomCode)
 
 	for {
 		_, bytes, err := ws.ReadMessage()
 		if err != nil {
-			log.Printf("error: %v", err)
-			delete(rooms, roomCode)
+			log.Printf("error while reading message: %v", err)
+			ws.Close()
+			delete(rooms[roomCode].conns, userid)
+			if len(rooms[roomCode].conns) == 0 {
+				delete(rooms, roomCode)
+				close(*channels[roomCode])
+				delete(channels, roomCode)
+			}
 			break
 		}
+
 		msg := string(bytes)
-		channels[roomCode] <- msg
+		*channels[roomCode] <- msg
 	}
 }
 
 func handleRoom(roomCode int) {
 	room := rooms[roomCode]
+	channel := *channels[roomCode]
 
-	for {
-		msg := <-channels[roomCode]
+	for msg := range channel {
 		for userid, ws := range room.conns {
-			fmt.Println("Room", roomCode, ": Sending", msg, "to", userid)
-			err := ws.WriteMessage(1, []byte(msg))
+			// fmt.Printf("Room %d: Sending %q to %d\n", roomCode, msg, userid)
+			err := ws.WriteMessage(websocket.TextMessage, []byte(msg))
 			if err != nil {
-				log.Printf("error: %v", err)
-				ws.Close()
+				log.Printf("error while writing message: %v\n", err)
 				delete(room.conns, userid)
+				if len(room.conns) == 0 {
+					ws.Close()
+					close(channel)
+					delete(rooms, roomCode)
+					delete(channels, roomCode)
+					break
+				}
 			}
 		}
 	}
