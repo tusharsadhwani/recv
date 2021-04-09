@@ -2,7 +2,7 @@
 
 :root {
   /* Theme */
-  --bg-dark: #916ed8;
+  --bg-dark: #ad8bf1;
   --color-dark: #fff;
 
   --bg-light: #f0f0f0;
@@ -15,8 +15,8 @@
   --primary-color: #5351da;
   --primary-hover: #422dff;
 
-  --error-color: #e92727;
-  --error-hover: #ff4444;
+  --error-color: #df4848;
+  --error-hover: #dd6f6f;
 
   --btn-color: var(--primary-color);
   --hover-color: var(--primary-hover);
@@ -101,4 +101,7 @@ h1 {
   font-size: 5rem;
   margin-bottom: 1rem;
   font-family: 'Poppins';
+}
+#code::after {
+  content: '\a0';
 }
