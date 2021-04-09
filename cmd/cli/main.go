@@ -49,6 +49,7 @@ func main() {
 		if err != nil {
 			log.Fatal("error while writing to websocket:", err)
 		}
+		fmt.Println()
 	}
 }
 

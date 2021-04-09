@@ -18,8 +18,13 @@ type Room struct {
 
 type RoomID = int
 
+type Message struct {
+	userid int
+	text   string
+}
+
 var rooms = make(map[RoomID]*Room)
-var channels = make(map[RoomID]*chan string)
+var channels = make(map[RoomID]*chan Message)
 var counters = make(map[RoomID]int)
 
 var upgrader = websocket.Upgrader{
@@ -33,7 +38,7 @@ func HandleConnect(w http.ResponseWriter, r *http.Request) {
 		roomCode := 10000 + rand.Intn(90000)
 		if rooms[roomCode] == nil {
 			rooms[roomCode] = &Room{conns: make(map[int]*websocket.Conn)}
-			channel := make(chan string)
+			channel := make(chan Message)
 			channels[roomCode] = &channel
 			go handleRoom(roomCode)
 			w.Write([]byte(fmt.Sprint(roomCode)))
@@ -100,7 +105,10 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		msg := string(bytes)
+		msg := Message{
+			userid: userid,
+			text:   string(bytes),
+		}
 		*channels[roomCode] <- msg
 	}
 }
@@ -111,8 +119,12 @@ func handleRoom(roomCode int) {
 
 	for msg := range channel {
 		for userid, ws := range room.conns {
+			if msg.userid == userid {
+				continue
+			}
+
 			// fmt.Printf("Room %d: Sending %q to %d\n", roomCode, msg, userid)
-			err := ws.WriteMessage(websocket.TextMessage, []byte(msg))
+			err := ws.WriteMessage(websocket.TextMessage, []byte(msg.text))
 			if err != nil {
 				log.Printf("error while writing message: %v\n", err)
 				delete(room.conns, userid)
