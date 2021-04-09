@@ -8,16 +8,45 @@
     <title>Recv</title>
   </head>
   <body>
-    <h1>Recv</h1>
-    <main id="main">
-      <button class="btn ripple">Create Room</button>
-    </main>
+    <div id="home" class="page">
+      <h1>Recv</h1>
+      <div class="main">
+        <button class="btn ripple" onclick="createRoom()">Create Room</button>
+      </div>
+    </div>
+    <div id="room" class="page">
+      <div class="main">
+        <p>The Room Code is:</p>
+        <p id="code">&nbsp;</p>
+        <button class="btn ripple error" onclick="closeRoom()">Close Room</button>
+      </div>
+    </div>
   </body>
   <script>
     const changeTheme = theme => {
       document.documentElement.style.setProperty('--bg', `var(--bg-${theme})`)
       document.documentElement.style.setProperty('--color', `var(--color-${theme})`)
     }
-    const main = document.getElementById('main')
+    const home = document.getElementById('home')
+    const room = document.getElementById('room')
+    const code = document.getElementById('code')
+
+    const createRoom = async () => {
+      changeTheme('dark')
+      home.classList.add('hidden')
+      room.classList.remove('hidden')
+
+      const resp = await fetch('http://localhost:8000/connect')
+      const data = await resp.text()
+      code.textContent = data
+    }
+
+    const closeRoom = () => {
+      changeTheme('light')
+      home.classList.remove('hidden')
+      room.classList.add('hidden')
+
+      code.textContent = ''
+    }
   </script>
 </html>

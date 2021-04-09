@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Open+Sans:wght@300;400&display=swap');
 
 :root {
   /* Theme */
@@ -16,7 +16,7 @@
   --primary-hover: #422dff;
 
   --error-color: #e92727;
-  --error-hover: #ff6464;
+  --error-hover: #ff4444;
 
   --btn-color: var(--primary-color);
   --hover-color: var(--primary-hover);
@@ -40,9 +40,7 @@ body {
   text-align: center;
   background-color: var(--bg);
   color: var(--color);
-
-  display: flex;
-  flex-direction: column;
+  transition-duration: 0.5s;
 }
 
 h1 {
@@ -51,22 +49,33 @@ h1 {
   line-height: 1.25;
 }
 
-main {
+.main {
   flex-grow: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
+.page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none;
+}
+
 .btn {
   border: none;
-  font-size: 28px;
+  font-size: 24px;
   border-radius: 4px;
   padding: 0.5em 0.75em;
   cursor: pointer;
   color: white;
   background-color: var(--btn-color);
-  box-shadow: 0 0 4px #999;
+  box-shadow: 0 0 4px rgba(127, 127, 127, 0.3);
   outline: none;
 }
 
@@ -86,4 +95,10 @@ main {
 .error {
   --btn-color: var(--error-color);
   --hover-color: var(--error-hover);
+}
+
+#code {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  font-family: 'Poppins';
 }
