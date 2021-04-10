@@ -11,7 +11,7 @@
     <div id="home" class="page">
       <h1>recv</h1>
       <div class="main">
-        <button class="btn ripple" onclick="createRoom()">Create Room</button>
+        <button class="btn" onclick="createRoom()">Create Room</button>
       </div>
     </div>
     <div id="room" class="page hidden">
@@ -19,7 +19,19 @@
       <div class="main">
         <p>The Room Code is:</p>
         <p id="code"></p>
-        <button class="btn ripple error" onclick="closeRoom()">Close Room</button>
+        <button class="btn error" onclick="closeRoom()">Close Room</button>
+        <button class="flat-btn" style="margin-top: 0.5rem" onclick="openMsgbox()">Open msgbox</button>
+      </div>
+    </div>
+    <div id="chatbox" class="page hidden">
+      <h1>msgbox</h1>
+      <div class="main">
+        <div id="msgbox">Henlo</div>
+        <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendText(event)">
+          <textarea id="textarea" oninput="resizeTextArea(event)"></textarea>
+          <button class="flat-btn tiny" style="padding-left: 1rem">Send</button>
+        </form>
+        <button class="flat-btn" style="margin-top: 0.5rem" onclick="closeMsgbox()">Go Back</button>
       </div>
     </div>
   </body>
@@ -31,6 +43,9 @@
     const home = document.getElementById('home')
     const room = document.getElementById('room')
     const code = document.getElementById('code')
+    const msgbox = document.getElementById('msgbox')
+    const form = document.getElementById('form')
+    const textarea = document.getElementById('textarea')
 
     const createRoom = async () => {
       changeTheme('dark')
@@ -48,6 +63,36 @@
       room.classList.add('hidden')
 
       code.textContent = ''
+    }
+
+    const openMsgbox = () => {
+      room.classList.add('hidden')
+      chatbox.classList.remove('hidden')
+    }
+    const closeMsgbox = () => {
+      room.classList.remove('hidden')
+      chatbox.classList.add('hidden')
+    }
+
+    const resizeTextArea = () => {
+      const text = textarea.value
+      const lineCount = text.split('\n').length
+      const maxCount = 5
+
+      const newHeight = Math.min(maxCount, lineCount)
+      textarea.style.height = `calc(${newHeight}rem + ${newHeight * 2}px)`
+    }
+
+    const checkSubmit = event => {
+      if (event.ctrlKey && event.keyCode === 13) form.dispatchEvent(new Event('submit'))
+    }
+
+    const sendText = event => {
+      event.preventDefault()
+      msgbox.textContent += '\n' + textarea.value
+
+      textarea.value = ''
+      resizeTextArea()
     }
   </script>
 </html>

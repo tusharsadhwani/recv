@@ -34,6 +34,7 @@
   padding: 0;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
+  color: var(--color);
 }
 
 html,
@@ -44,7 +45,6 @@ body {
 body {
   text-align: center;
   background-color: var(--bg);
-  color: var(--color);
   transition-duration: var(--duration);
 }
 
@@ -57,10 +57,12 @@ h1 {
 
 .main {
   flex-grow: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 0.5rem;
 }
 
 .page {
@@ -77,6 +79,7 @@ h1 {
 .hidden {
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
   transition: var(--duration) ease-out;
 }
 
@@ -85,7 +88,7 @@ h1 {
   top: 0;
   left: 0;
   position: relative;
-  font-size: 24px;
+  font-size: 1.5rem;
   padding: 0.3em 0.6em;
   cursor: pointer;
   color: var(--btn-color);
@@ -104,6 +107,21 @@ h1 {
   box-shadow: -0px -0px var(--bg), -2px -2px #aaa;
 }
 
+.flat-btn {
+  color: var(--btn-color);
+  font-size: 1.5rem;
+  padding: 0.3em 0.6em;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.flat-btn:hover,
+.flat-btn:focus {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  text-decoration: underline;
+}
+
 .error {
   --btn-bg: var(--error-bg);
 }
@@ -115,4 +133,60 @@ h1 {
 }
 #code::after {
   content: '\a0';
+}
+
+#msgbox {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 500px;
+  margin: 16px;
+  padding-top: 4px;
+  padding-left: 4px;
+  box-shadow: -2px -2px var(--bg), -4px -4px #aaa;
+  font-family: 'Courier New', Courier, monospace;
+  text-align: left;
+  white-space: pre;
+}
+
+.input {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  align-items: flex-end;
+}
+
+textarea {
+  flex-grow: 1;
+  box-sizing: content-box;
+  resize: none;
+  font-size: 1rem;
+  padding: 4px;
+  height: calc(1rem + 2px);
+  border: 2px solid #aaa;
+  outline: none;
+  background-color: transparent;
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre;
+}
+
+textarea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  width: 8px;
+  height: 8px;
+  background-color: #ccc;
+  border-radius: 8px;
+}
+
+textarea::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.tiny {
+  padding: 0.2rem 0.4rem;
+  font-size: 1rem;
 }
