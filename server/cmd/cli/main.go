@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -13,28 +12,21 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var scheme = "http"
-var wsscheme = "ws"
-var port = 8000
-var domain = fmt.Sprintf("localhost:%d", port)
-
 func main() {
-	fmt.Println("Connecting to recv.live...")
-
-	flag.Parse()
-	arg := flag.Arg(0)
+	cfg := GetConfig()
+	fmt.Printf("Connecting to %s...\n", cfg.domain)
 
 	var roomCode int
-	if arg == "" {
+	if cfg.roomCode == "" {
 		roomCode = createRoom()
 	} else {
 		var err error
-		roomCode, err = strconv.Atoi(arg)
-		if err != nil {
+		if len(cfg.roomCode) != 5 {
 			fmt.Println("Provide a 5 digit room code")
 			return
 		}
-		if len(arg) != 5 {
+		roomCode, err = strconv.Atoi(cfg.roomCode)
+		if err != nil {
 			fmt.Println("Provide a 5 digit room code")
 			return
 		}
@@ -56,7 +48,8 @@ func main() {
 }
 
 func createRoom() int {
-	url := fmt.Sprintf("%s://%s/connect", scheme, domain)
+	cfg := GetConfig()
+	url := fmt.Sprintf("%s://%s/connect", cfg.scheme, cfg.domain)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatal("error while getting room code:", err)
@@ -74,7 +67,8 @@ func createRoom() int {
 }
 
 func connect(roomCode int) *websocket.Conn {
-	url := fmt.Sprintf("%s://%s/ws?code=%d", wsscheme, domain, roomCode)
+	cfg := GetConfig()
+	url := fmt.Sprintf("%s://%s/ws?code=%d", cfg.wsscheme, cfg.domain, roomCode)
 	conn, _, err := websocket.DefaultDialer.Dial(url, http.Header{})
 	if err != nil {
 		log.Fatal("error while connecting to websocket:", err)
