@@ -9,12 +9,13 @@
   </head>
   <body>
     <div id="home" class="page">
-      <h1>Recv</h1>
+      <h1>recv</h1>
       <div class="main">
         <button class="btn ripple" onclick="createRoom()">Create Room</button>
       </div>
     </div>
-    <div id="room" class="page">
+    <div id="room" class="page hidden">
+      <h1>recv</h1>
       <div class="main">
         <p>The Room Code is:</p>
         <p id="code"></p>
@@ -42,7 +43,7 @@
     }
 
     const closeRoom = () => {
-      changeTheme('light')
+      changeTheme('main')
       home.classList.remove('hidden')
       room.classList.add('hidden')
 
