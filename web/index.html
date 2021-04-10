@@ -26,7 +26,7 @@
     <div id="chatbox" class="page hidden">
       <h1>msgbox</h1>
       <div class="main">
-        <div id="msgbox">Henlo</div>
+        <div id="msgbox"></div>
         <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendText(event)">
           <textarea id="textarea" oninput="resizeTextArea(event)"></textarea>
           <button class="flat-btn tiny" style="padding-left: 1rem">Send</button>
@@ -40,6 +40,7 @@
       document.documentElement.style.setProperty('--bg', `var(--bg-${theme})`)
       document.documentElement.style.setProperty('--color', `var(--color-${theme})`)
     }
+
     const home = document.getElementById('home')
     const room = document.getElementById('room')
     const code = document.getElementById('code')
@@ -47,14 +48,19 @@
     const form = document.getElementById('form')
     const textarea = document.getElementById('textarea')
 
+    let ws = null
+
     const createRoom = async () => {
       changeTheme('dark')
       home.classList.add('hidden')
       room.classList.remove('hidden')
 
       const resp = await fetch('http://localhost:8000/connect')
-      const data = await resp.text()
-      code.textContent = data
+      const roomCode = await resp.text()
+      code.textContent = roomCode
+
+      ws = new WebSocket(`ws://localhost:8000/ws?code=${roomCode}`)
+      ws.onmessage = newMessage
     }
 
     const closeRoom = () => {
@@ -63,6 +69,7 @@
       room.classList.add('hidden')
 
       code.textContent = ''
+      ws = null
     }
 
     const openMsgbox = () => {
@@ -89,10 +96,16 @@
 
     const sendText = event => {
       event.preventDefault()
-      msgbox.textContent += '\n' + textarea.value
+      const text = textarea.value.trimEnd() + '\n'
+      ws.send(text)
+      msgbox.textContent += text
 
       textarea.value = ''
       resizeTextArea()
+    }
+
+    const newMessage = event => {
+      msgbox.textContent += event.data
     }
   </script>
 </html>
