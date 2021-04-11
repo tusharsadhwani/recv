@@ -173,20 +173,21 @@ textarea {
   white-space: pre;
 }
 
-textarea::-webkit-scrollbar {
+.scrollable {
+  overflow: auto;
+}
+.scrollable::-webkit-scrollbar {
   width: 8px;
   height: 8px;
   padding: 0;
 }
-
-textarea::-webkit-scrollbar-thumb {
+.scrollable::-webkit-scrollbar-thumb {
   width: 8px;
   height: 8px;
   background-color: #ccc;
   border-radius: 8px;
 }
-
-textarea::-webkit-scrollbar-corner {
+.scrollable::-webkit-scrollbar-corner {
   display: none;
 }
 

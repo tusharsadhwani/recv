@@ -42,9 +42,9 @@
     <div id="chatbox" class="page hidden">
       <h1>msgbox</h1>
       <div class="main">
-        <div id="msgbox"></div>
+        <div id="msgbox" class="scrollable"></div>
         <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendText(event)">
-          <textarea id="textarea" oninput="resizeTextArea(event)"></textarea>
+          <textarea id="textarea" class="scrollable" oninput="resizeTextArea(event)"></textarea>
           <button class="flat-btn tiny" style="padding-left: 1rem">Send</button>
         </form>
         <button class="flat-btn" style="margin-top: 0.5rem" onclick="closeMsgbox()">Go Back</button>
@@ -84,9 +84,9 @@
     }
 
     const connect = roomCode => {
+      code.textContent = roomCode
       ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
       ws.onmessage = newMessage
-      code.textContent = roomCode
     }
 
     const createRoomAndConnect = async () => {
@@ -165,6 +165,7 @@
       text = text.trimEnd() + '\n'
 
       const roomCode = await createRoom()
+      code.textContent = roomCode
       ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
       ws.onopen = () => {
         ws.send(text)
