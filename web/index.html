@@ -62,11 +62,11 @@
       home.classList.add('hidden')
       room.classList.remove('hidden')
 
-      const resp = await fetch('http://localhost:8000/connect')
+      const resp = await fetch('https://recv.live/connect')
       const roomCode = await resp.text()
       code.textContent = roomCode
 
-      ws = new WebSocket(`ws://localhost:8000/ws?code=${roomCode}`)
+      ws = new WebSocket(`wss://recv.live/ws?code=${roomCode}`)
       ws.onmessage = newMessage
     }
 
