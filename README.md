@@ -18,7 +18,7 @@ A super simple, super fast way to transfer text and URLs between two devices.
 
   - MacOS/Linux:
 
-    - Extract `recv` from the `recv-PLATFORM-XX.exe` file, and add it to PATH
+    - Extract `recv` from the `recv-PLATFORM-XX.tar.gz` file, and add it to `PATH`
 
       For eg. on linux you can do:
 
