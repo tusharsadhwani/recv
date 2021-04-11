@@ -11,9 +11,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// TODO: Delete unused rooms every few minutes,
+// by adding a "last joined" timestamp, and deleting a room if it's empty
+// and no-one has joined in the last X minutes
+
 type Room struct {
 	sync.Mutex
-	conns map[int]*websocket.Conn
+	conns    map[int]*websocket.Conn
+	messages [][]byte
 }
 
 type RoomID = int
@@ -89,21 +94,30 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 
 	counters[roomCode] += 1
 	userid := counters[roomCode]
-	rooms[roomCode].conns[userid] = ws
+	room := rooms[roomCode]
+	room.conns[userid] = ws
+
+	// Send older messages to client
+	for _, msg := range room.messages {
+		ws.WriteMessage(websocket.TextMessage, msg)
+	}
 
 	for {
 		_, bytes, err := ws.ReadMessage()
 		if err != nil {
 			log.Printf("error while reading message: %v", err)
 			ws.Close()
-			delete(rooms[roomCode].conns, userid)
-			if len(rooms[roomCode].conns) == 0 {
+			delete(room.conns, userid)
+			if len(room.conns) == 0 {
 				delete(rooms, roomCode)
 				close(*channels[roomCode])
 				delete(channels, roomCode)
 			}
 			break
 		}
+
+		// TODO: Add a limit to the old message cache
+		room.messages = append(room.messages, bytes)
 
 		msg := Message{
 			userid: userid,
