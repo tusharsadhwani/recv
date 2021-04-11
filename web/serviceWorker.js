@@ -8,10 +8,24 @@ self.addEventListener('install', installEvent => {
   )
 })
 
-self.addEventListener('fetch', fetchEvent => {
-  fetchEvent.respondWith(
-    caches.match(fetchEvent.request).then(res => {
-      return res || fetch(fetchEvent.request)
-    }),
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        return caches.open(appName).then(cache => {
+          cache.put(event.request, response.clone())
+          return response
+        })
+      })
+      .catch(error => {
+        return caches.open(appName).then(cache => {
+          return cache.match(event.request).then(response => {
+            if (response != null) {
+              return response
+            }
+            throw error
+          })
+        })
+      }),
   )
 })
