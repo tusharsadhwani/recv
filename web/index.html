@@ -19,7 +19,16 @@
       <h1>recv</h1>
       <div class="main">
         <button class="btn" onclick="createRoomAndConnect()">Create Room</button>
+        <button class="flat-btn" style="margin-top: 0.5rem" onclick="showJoinScreen()">Join Room</button>
       </div>
+    </div>
+    <div id="join" class="page hidden">
+      <h1>recv</h1>
+      <form class="main" onsubmit="joinRoom(event)">
+        <input id="joincode" type="text" />
+        <button type="submit" class="btn" style="margin-top: 0.5rem">Join Room</button>
+        <button class="flat-btn" style="margin-top: 0.5rem" onclick="hideJoinScreen()">Go Back</button>
+      </form>
     </div>
     <div id="room" class="page hidden">
       <h1>recv</h1>
@@ -55,6 +64,8 @@
     const home = document.getElementById('home')
     const room = document.getElementById('room')
     const code = document.getElementById('code')
+    const join = document.getElementById('join')
+    const joincode = document.getElementById('joincode')
     const msgbox = document.getElementById('msgbox')
     const form = document.getElementById('form')
     const textarea = document.getElementById('textarea')
@@ -69,17 +80,37 @@
 
       const resp = await fetch(`${domain}/connect`)
       const roomCode = await resp.text()
-      code.textContent = roomCode
       return roomCode
     }
 
     const connect = roomCode => {
       ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
       ws.onmessage = newMessage
+      code.textContent = roomCode
     }
 
     const createRoomAndConnect = async () => {
       const roomCode = await createRoom()
+      connect(roomCode)
+    }
+
+    const showJoinScreen = () => {
+      home.classList.add('hidden')
+      join.classList.remove('hidden')
+    }
+
+    const hideJoinScreen = () => {
+      home.classList.remove('hidden')
+      join.classList.add('hidden')
+    }
+
+    const joinRoom = event => {
+      event.preventDefault()
+      changeTheme('dark')
+      join.classList.add('hidden')
+      room.classList.remove('hidden')
+
+      const roomCode = joincode.value
       connect(roomCode)
     }
 

@@ -14,10 +14,11 @@
   --color: var(--color-main);
 
   /* Buttons */
-  --primary-bg: var(--dark);
-  --primary-color: var(--light);
+  --primary-bg: var(--color);
+  --primary-color: var(--bg);
 
   --error-bg: #bb0000;
+  --error-color: var(--light);
 
   --btn-bg: var(--primary-bg);
   --btn-color: var(--primary-color);
@@ -108,7 +109,7 @@ h1 {
 }
 
 .flat-btn {
-  color: var(--btn-color);
+  color: var(--btn-bg);
   font-size: 1.5rem;
   padding: 0.3em 0.6em;
   background: none;
@@ -124,6 +125,7 @@ h1 {
 
 .error {
   --btn-bg: var(--error-bg);
+  --btn-color: var(--error-color);
 }
 
 #code {
@@ -131,6 +133,7 @@ h1 {
   margin-bottom: 1rem;
   font-family: 'Inter';
 }
+#code::before,
 #code::after {
   content: '\a0';
 }
@@ -190,4 +193,16 @@ textarea::-webkit-scrollbar-corner {
 .tiny {
   padding: 0.2rem 0.4rem;
   font-size: 1rem;
+}
+
+#joincode {
+  max-width: 300px;
+  text-align: center;
+  background: none;
+  outline: none;
+  font-size: 5rem;
+  margin-bottom: 0.5rem;
+  border: none;
+  border-bottom: 2px solid #061433;
+  font-family: 'Inter';
 }
