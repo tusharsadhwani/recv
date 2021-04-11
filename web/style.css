@@ -160,8 +160,9 @@ textarea {
   box-sizing: content-box;
   resize: none;
   font-size: 1rem;
+  line-height: 1;
   padding: 4px;
-  height: calc(1rem + 2px);
+  height: 1rem;
   border: 2px solid #aaa;
   outline: none;
   background-color: transparent;
