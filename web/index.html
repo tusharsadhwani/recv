@@ -130,10 +130,13 @@
 
     // Handling web share via PWA
     const webShare = async text => {
+      text = text.trimEnd() + '\n'
+
       const roomCode = await createRoom()
       ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
       ws.onopen = () => {
         ws.send(text)
+        msgbox.textContent += text
       }
       ws.onmessage = newMessage
     }
