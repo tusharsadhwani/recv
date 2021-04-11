@@ -8,7 +8,7 @@ A super simple, super fast way to transfer text and URLs between two devices.
 
 - You can use the website directly: [recv.live](https://recv.live)
 - You can install the website as a PWA, and share directly to it to instantly create a room
-- You can download and install the recv CLI app from the Releases page:
+- You can download and install the recv CLI app from the [Releases](https://github.com/tusharsadhwani/recv/releases) page:
 
   - Windows:
 
