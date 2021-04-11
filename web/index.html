@@ -18,7 +18,7 @@
     <div id="home" class="page">
       <h1>recv</h1>
       <div class="main">
-        <button class="btn" onclick="createRoom()">Create Room</button>
+        <button class="btn" onclick="createRoomAndConnect()">Create Room</button>
       </div>
     </div>
     <div id="room" class="page hidden">
@@ -43,6 +43,10 @@
     </div>
   </body>
   <script>
+    // Initial Setup
+    const domain = 'https://recv.live'
+    const wsdomain = 'wss://recv.live'
+
     const changeTheme = theme => {
       document.documentElement.style.setProperty('--bg', `var(--bg-${theme})`)
       document.documentElement.style.setProperty('--color', `var(--color-${theme})`)
@@ -57,17 +61,26 @@
 
     let ws = null
 
+    // Pages, Interactivity Setup
     const createRoom = async () => {
       changeTheme('dark')
       home.classList.add('hidden')
       room.classList.remove('hidden')
 
-      const resp = await fetch('https://recv.live/connect')
+      const resp = await fetch(`${domain}/connect`)
       const roomCode = await resp.text()
       code.textContent = roomCode
+      return roomCode
+    }
 
-      ws = new WebSocket(`wss://recv.live/ws?code=${roomCode}`)
+    const connect = roomCode => {
+      ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
       ws.onmessage = newMessage
+    }
+
+    const createRoomAndConnect = async () => {
+      const roomCode = await createRoom()
+      connect(roomCode)
     }
 
     const closeRoom = () => {
@@ -115,12 +128,27 @@
       msgbox.textContent += event.data
     }
 
-    // PWA stuff
+    // Handling web share via PWA
+    const webShare = async text => {
+      const roomCode = await createRoom()
+      ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
+      ws.onopen = () => {
+        ws.send(text)
+      }
+      ws.onmessage = newMessage
+    }
+
+    const parsedUrl = new URL(window.location)
+    const text = parsedUrl.searchParams.get('text')
+    if (text) {
+      webShare(text)
+    }
+
+    // Service worker, for the PWA to work
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function () {
         navigator.serviceWorker
           .register('./serviceWorker.js')
-          .then(res => console.log('service worker registered'))
           .catch(err => console.log('service worker not registered', err))
       })
     }
