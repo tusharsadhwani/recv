@@ -29,7 +29,7 @@ A super simple, super fast way to transfer text and URLs between devices.
 
 ## Deploy your own
 
-- Server
+- Server (Includes the website)
 
   ```bash
   cd server
@@ -37,7 +37,9 @@ A super simple, super fast way to transfer text and URLs between devices.
   ./server
   ```
 
-  you can specify a port using the `PORT` using the `-p` flag:
+  This will run the web server on `localhost:8000`
+
+  You can specify a port using the `-p` flag (defaults to 8000):
 
   ```bash
   ./server -p 5000
@@ -61,7 +63,7 @@ A super simple, super fast way to transfer text and URLs between devices.
   air -c .air.toml
   ```
 
-  you can specify a port using the `PORT` environment variable:
+  You can specify a port using the `PORT` environment variable:
 
   ```bash
   PORT=5000 air -c .air.toml
@@ -73,7 +75,7 @@ A super simple, super fast way to transfer text and URLs between devices.
   APP_ENV=dev go run ./cmd/cli
   ```
 
-  you can specify port and room code using environment variables:
+  You can specify port and room code using environment variables:
 
   ```bash
   PORT=5000 ROOM=12345 go run ./cmd/cli
