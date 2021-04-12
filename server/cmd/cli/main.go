@@ -42,7 +42,7 @@ func main() {
 		text, _ := input.ReadString('\n')
 		err := conn.WriteMessage(websocket.TextMessage, []byte(text))
 		if err != nil {
-			log.Fatal("error while writing to websocket:", err)
+			log.Fatal(err)
 		}
 	}
 }
@@ -81,7 +81,7 @@ func readMessages(conn *websocket.Conn) {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Fatal("error while reading from websocket:", err)
+			log.Fatal(err)
 		}
 		fmt.Printf("%s", msg)
 	}

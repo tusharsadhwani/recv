@@ -62,28 +62,28 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	params, ok := r.URL.Query()["code"]
 
 	if !ok || len(params[0]) == 0 {
-		ws.WriteMessage(websocket.TextMessage, []byte("Url Param 'code' is missing"))
+		ws.WriteMessage(websocket.TextMessage, []byte("URL parameter 'code' is missing\n"))
 		return
 	}
 	roomCodeStr := params[0]
 	roomCode, err := strconv.Atoi(roomCodeStr)
 	if err != nil {
-		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code"))
+		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code\n"))
 		return
 	}
 	if len(roomCodeStr) != 5 {
-		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code"))
+		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code\n"))
 		return
 	}
 	if rooms[roomCode] == nil {
-		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist"))
+		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist\n"))
 		close(*channels[roomCode])
 		delete(rooms, roomCode)
 		delete(channels, roomCode)
 		return
 	}
 	if channels[roomCode] == nil {
-		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist"))
+		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist\n"))
 		if rooms[roomCode] != nil {
 			for _, conn := range rooms[roomCode].conns {
 				conn.Close()
