@@ -28,7 +28,6 @@ func main() {
 		}
 		roomCode, err = strconv.Atoi(cfg.roomCode)
 		if err != nil {
-			fmt.Println("Here is the error!")
 			fmt.Printf("Provide a %d digit room code\n", utils.RoomCodeLength)
 			return
 		}

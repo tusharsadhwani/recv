@@ -71,7 +71,7 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)))
 		return
 	}
-	if len(roomCodeStr) != 5 {
+	if len(roomCodeStr) != utils.RoomCodeLength {
 		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)))
 		return
 	}
