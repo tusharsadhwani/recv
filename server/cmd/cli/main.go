@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/websocket"
-	"github.com/tusharsadhwani/recv/cmd/utils"
+	"github.com/tusharsadhwani/recv/utils"
 )
 
 func main() {

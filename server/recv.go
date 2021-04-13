@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/tusharsadhwani/recv/cmd/utils"
+	"github.com/tusharsadhwani/recv/utils"
 )
 
 // TODO: Delete unused rooms every few minutes,
