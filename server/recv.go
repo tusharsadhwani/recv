@@ -3,12 +3,12 @@ package recv
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/tusharsadhwani/recv/utils"
 )
 
 // TODO: Delete unused rooms every few minutes,
@@ -40,7 +40,7 @@ var upgrader = websocket.Upgrader{
 
 func HandleConnect(w http.ResponseWriter, r *http.Request) {
 	for {
-		roomCode := 10000 + rand.Intn(90000)
+		roomCode := utils.GenerateRoomCode()
 		if rooms[roomCode] == nil {
 			rooms[roomCode] = &Room{conns: make(map[int]*websocket.Conn)}
 			channel := make(chan Message)
@@ -68,11 +68,17 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	roomCodeStr := params[0]
 	roomCode, err := strconv.Atoi(roomCodeStr)
 	if err != nil {
-		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code\n"))
+		ws.WriteMessage(
+			websocket.TextMessage,
+			[]byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)),
+		)
 		return
 	}
-	if len(roomCodeStr) != 5 {
-		ws.WriteMessage(websocket.TextMessage, []byte("Provide a 5 digit room code\n"))
+	if len(roomCodeStr) != utils.RoomCodeLength {
+		ws.WriteMessage(
+			websocket.TextMessage,
+			[]byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)),
+		)
 		return
 	}
 	if rooms[roomCode] == nil {
