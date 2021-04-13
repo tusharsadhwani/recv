@@ -22,13 +22,13 @@ func main() {
 		roomCode = createRoom()
 	} else {
 		var err error
-		if len(cfg.roomCode) != utils.LENGTH_OF_ROOM_CODE {
-			fmt.Printf("Provide a %d digit room code\n", utils.LENGTH_OF_ROOM_CODE)
+		if len(cfg.roomCode) != utils.RoomCodeLength {
+			fmt.Printf("Provide a %d digit room code\n", utils.RoomCodeLength)
 			return
 		}
 		roomCode, err = strconv.Atoi(cfg.roomCode)
 		if err != nil {
-			fmt.Printf("Provide a %d digit room code\n", utils.LENGTH_OF_ROOM_CODE)
+			fmt.Printf("Provide a %d digit room code\n", utils.RoomCodeLength)
 			return
 		}
 	}

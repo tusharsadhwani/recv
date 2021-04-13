@@ -68,11 +68,11 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	roomCodeStr := params[0]
 	roomCode, err := strconv.Atoi(roomCodeStr)
 	if err != nil {
-		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.LENGTH_OF_ROOM_CODE)))
+		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)))
 		return
 	}
 	if len(roomCodeStr) != 5 {
-		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.LENGTH_OF_ROOM_CODE)))
+		ws.WriteMessage(websocket.TextMessage, []byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)))
 		return
 	}
 	if rooms[roomCode] == nil {
