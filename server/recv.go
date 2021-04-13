@@ -15,6 +15,8 @@ import (
 // by adding a "last joined" timestamp, and deleting a room if it's empty
 // and no-one has joined in the last X minutes
 
+// TODO: figure out where to add mutex locks for the rooms, or remove mutex entirely
+
 type Room struct {
 	sync.Mutex
 	conns    map[int]*websocket.Conn
