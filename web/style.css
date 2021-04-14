@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Inter:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Inter:wght@500&family=Inconsolata&display=swap');
 :root {
   /* Theme */
   --light: #f0f0f0;
-  --dark: #061433;
+  --dark: #010713;
 
   --bg-main: var(--light);
   --bg-dark: var(--dark);
@@ -145,8 +145,10 @@ h1 {
   margin: 16px;
   padding-top: 4px;
   padding-left: 4px;
-  box-shadow: -2px -2px var(--bg), -4px -4px #aaa;
-  font-family: 'Courier New', Courier, monospace;
+  box-shadow: -2px -2px var(--bg), -4px -4px #aaa, 0px 0px 50px black;
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  font-family: 'Inconsolata', 'Courier New', Courier, monospace;
   text-align: left;
   white-space: pre;
 }
@@ -162,14 +164,14 @@ textarea {
   flex-grow: 1;
   box-sizing: content-box;
   resize: none;
-  font-size: 1rem;
-  line-height: 1;
+  font-size: 1.125rem;
+  line-height: 1.25rem;
+  height: 1.25rem;
   padding: 4px;
-  height: 1rem;
   border: 2px solid #aaa;
   outline: none;
   background-color: transparent;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Inconsolata', 'Courier New', Courier, monospace;
   white-space: pre;
 }
 
