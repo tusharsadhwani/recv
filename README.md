@@ -4,6 +4,8 @@ A super simple, super fast way to transfer text and URLs between devices.
 
 ![Demo](https://user-images.githubusercontent.com/43412083/114314685-43dd5b00-9b19-11eb-8c57-bdf3235c32b7.gif)
 
+> Author's Note: It's pronounced "receive", but you're free to call it whatever.
+
 ## Usage
 
 - You can use the website directly: [recv.live](https://recv.live)
