@@ -22,13 +22,19 @@ func GetConfig() *Config {
 }
 
 func InitConfig() {
-	if os.Getenv("APP_ENV") == "dev" {
+	_DOMAIN := "recv.live" // Your website
+	_SECURE := true        // Whether the website uses https
+
+	isDev := os.Getenv("APP_ENV") == "dev"
+
+	if isDev {
+		roomCode := os.Getenv("ROOM")
 		port := os.Getenv("PORT")
 		if port == "" {
 			port = "8000"
 		}
 		config = &Config{
-			roomCode: os.Getenv("ROOM"),
+			roomCode: roomCode,
 			domain:   "localhost:" + port,
 			scheme:   "http",
 			wsscheme: "ws",
@@ -36,11 +42,21 @@ func InitConfig() {
 	} else {
 		flag.Parse()
 		roomCode := flag.Arg(0)
+		var scheme string
+		var wsscheme string
+		if _SECURE {
+			scheme = "https"
+			wsscheme = "wss"
+		} else {
+			scheme = "http"
+			wsscheme = "ws"
+		}
+
 		config = &Config{
 			roomCode: roomCode,
-			domain:   "recv.live",
-			scheme:   "https",
-			wsscheme: "wss",
+			domain:   _DOMAIN,
+			scheme:   scheme,
+			wsscheme: wsscheme,
 		}
 	}
 }

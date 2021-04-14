@@ -53,8 +53,13 @@
   </body>
   <script>
     // Initial Setup
-    const domain = 'https://recv.live'
-    const wsdomain = 'wss://recv.live'
+    const DOMAIN = 'recv.live'
+    const SECURE = true
+
+    const scheme = SECURE ? 'https' : 'http'
+    const wsscheme = SECURE ? 'wss' : 'ws'
+    const httpdomain = `${scheme}://${DOMAIN}`
+    const wsdomain = `${wsscheme}://${DOMAIN}`
 
     const changeTheme = theme => {
       document.documentElement.style.setProperty('--bg', `var(--bg-${theme})`)
@@ -78,7 +83,7 @@
       home.classList.add('hidden')
       room.classList.remove('hidden')
 
-      const resp = await fetch(`${domain}/connect`)
+      const resp = await fetch(`${httpdomain}/connect`)
       const roomCode = await resp.text()
       return roomCode
     }

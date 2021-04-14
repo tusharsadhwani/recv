@@ -59,7 +59,12 @@ A super simple, super fast way to transfer text and URLs between devices.
 
 - Server
 
-  > you will need [air](https://github.com/cosmtrek/air) installed
+  Edit the default parameters at the top of the the `script` tag in [index.html](./web/index.html).
+  These include the website's domain name, and whether or not to use HTTPS/WSS.
+
+  During development, you'll have to edit `DOMAIN` to be `localhost:8000` (or whichever port you choose to run it at), and `SECURE` to be `false`.
+
+  > you will need [air](https://github.com/cosmtrek/air) installed for hot reload
 
   ```bash
   air -c .air.toml
@@ -72,6 +77,11 @@ A super simple, super fast way to transfer text and URLs between devices.
   ```
 
 - CLI
+
+  Edit the default parameters in `InitConfig` in [config.go](./server/cmd/cli/config.go).
+  These include the website's domain name, and whether or not to use HTTPS/WSS.
+
+  Note that in dev mode (when `APP_ENV=dev`) you'll always use http and localhost.
 
   ```bash
   APP_ENV=dev go run ./cmd/cli
