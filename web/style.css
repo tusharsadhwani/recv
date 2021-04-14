@@ -64,6 +64,7 @@ h1 {
   justify-content: center;
   align-items: center;
   padding: 0.5rem;
+  overflow: auto;
 }
 
 .page {
@@ -145,7 +146,9 @@ h1 {
   margin: 16px;
   padding-top: 4px;
   padding-left: 4px;
-  box-shadow: -2px -2px var(--bg), -4px -4px #aaa, 0px 0px 50px black;
+  box-shadow: 0px 0px 50px black;
+  border-top: 2px solid #aaa;
+  border-left: 2px solid #aaa;
   font-size: 1.125rem;
   line-height: 1.25rem;
   font-family: 'Inconsolata', 'Courier New', Courier, monospace;
@@ -183,15 +186,13 @@ h1 {
   overflow: auto;
 }
 .scrollable::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
   padding: 0;
 }
 .scrollable::-webkit-scrollbar-thumb {
-  width: 8px;
-  height: 8px;
   background-color: #ccc;
-  border-radius: 8px;
+  border-radius: 0px;
 }
 .scrollable::-webkit-scrollbar-corner {
   display: none;
