@@ -206,6 +206,6 @@ textarea {
   font-size: 5rem;
   margin-bottom: 0.5rem;
   border: none;
-  border-bottom: 2px solid #061433;
+  border-bottom: 2px solid var(--dark);
   font-family: 'Inter';
 }
