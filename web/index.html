@@ -144,7 +144,7 @@
       const maxCount = 5
 
       const newHeight = Math.min(maxCount, lineCount)
-      textarea.style.height = `${newHeight * 1.25}rem`
+      textarea.style.height = `calc(${newHeight * 1.25}rem + 3px)`
     }
 
     const checkSubmit = event => {

@@ -160,19 +160,23 @@ h1 {
   align-items: flex-end;
 }
 
-textarea {
+#textarea {
   flex-grow: 1;
   box-sizing: content-box;
   resize: none;
   font-size: 1.125rem;
   line-height: 1.25rem;
-  height: 1.25rem;
+  height: calc(1.25rem + 3px);
   padding: 4px;
   border: 2px solid #aaa;
   outline: none;
   background-color: transparent;
   font-family: 'Inconsolata', 'Courier New', Courier, monospace;
   white-space: pre;
+}
+#textarea::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
 }
 
 .scrollable {
