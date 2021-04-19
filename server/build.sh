@@ -9,13 +9,13 @@ function build_platform {
     echo 'Error: GOOS not provided'
     exit 1
   fi
-  GOOS=$1
+  export GOOS=$1
 
   if [[ -z $2 ]]; then
     echo 'Error: GOARCH not provided'
     exit 1
   fi
-  GOARCH=$2
+  export GOARCH=$2
 
   case $GOARCH in
     amd64)
@@ -43,7 +43,6 @@ function build_platform {
 
 build_platform "linux" "386"
 build_platform "linux" "amd64"
-build_platform "darwin" "386"
 build_platform "darwin" "amd64"
 build_platform "windows" "386"
 build_platform "windows" "amd64"
