@@ -2,7 +2,7 @@
 
 A super simple, super fast way to transfer text and URLs between devices.
 
-![Demo](https://user-images.githubusercontent.com/43412083/114314685-43dd5b00-9b19-11eb-8c57-bdf3235c32b7.gif)
+![Demo](https://user-images.githubusercontent.com/43412083/115220989-d5a32480-a126-11eb-8f2d-8fdc52f4ab41.gif)
 
 > Author's Note: It's pronounced "receive", but you're free to call it whatever.
 
