@@ -104,9 +104,18 @@
       droptarget.textContent = 'Uploading...'
 
       reader.addEventListener('loadend', async () => {
-        const response = await fetch(`${httpdomain}/upload`)
+        const response = await fetch(`${httpdomain}/upload`, {
+          method: 'post',
+          body: file.name,
+        })
         const preSignedUrl = await response.text()
         console.log(preSignedUrl)
+
+        const uploadResponse = await fetch(preSignedUrl, {
+          method: 'put',
+          body: reader.result,
+        })
+        console.log(uploadResponse)
         droptarget.style.opacity = 0
         droptarget.textContent = 'Drop Files to upload...'
       })

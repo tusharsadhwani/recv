@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -57,7 +58,15 @@ func getPort() int {
 }
 
 func GetPresignedURL(w http.ResponseWriter, req *http.Request) {
-	url, err := GeneratePresignedURL()
+	filenameBytes, err := ioutil.ReadAll(req.Body)
+	if err != nil || len(filenameBytes) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Please provide a file name in request body."))
+		return
+	}
+
+	filename := string(filenameBytes)
+	url, err := GeneratePresignedURL(filename)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Internal Server Error"))
@@ -68,7 +77,7 @@ func GetPresignedURL(w http.ResponseWriter, req *http.Request) {
 }
 
 // GeneratePresignedURL generates a pre-signed url for file upload on S3
-func GeneratePresignedURL() (string, error) {
+func GeneratePresignedURL(filename string) (string, error) {
 	cfg := GetConfig()
 
 	s3 := simples3.New(cfg.S3Region, cfg.S3AccessKey, cfg.S3SecretKey)
@@ -79,7 +88,7 @@ func GeneratePresignedURL() (string, error) {
 		return "", err
 	}
 	randomHex := strings.ReplaceAll(uuid.String(), "-", "")
-	objectKey := fmt.Sprintf("%x-%s", timestamp.Unix(), randomHex)
+	objectKey := fmt.Sprintf("%x-%s-%s", timestamp.Unix(), randomHex, filename)
 
 	url := s3.GeneratePresignedURL(simples3.PresignedInput{
 		Bucket:        cfg.S3Bucket,
