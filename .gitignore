@@ -1,2 +1,6 @@
+.vscode
+
 server/dist
 server/tmp
+server/server
+server/cli
