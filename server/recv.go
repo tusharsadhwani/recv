@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	. "github.com/tusharsadhwani/recv/constants"
 	"github.com/tusharsadhwani/recv/utils"
 )
 
@@ -22,8 +23,6 @@ type Room struct {
 	conns    map[int]*websocket.Conn
 	messages [][]byte
 }
-
-type RoomID = int
 
 type Message struct {
 	userid int
@@ -68,21 +67,24 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	roomCodeStr := params[0]
-	roomCode, err := strconv.Atoi(roomCodeStr)
+	if len(roomCodeStr) != RoomCodeLength {
+		ws.WriteMessage(
+			websocket.TextMessage,
+			[]byte(fmt.Sprintf("Provide a %d digit room code\n", RoomCodeLength)),
+		)
+		return
+	}
+
+	roomCodeInt, err := strconv.Atoi(roomCodeStr)
 	if err != nil {
 		ws.WriteMessage(
 			websocket.TextMessage,
-			[]byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)),
+			[]byte(fmt.Sprintf("Provide a %d digit room code\n", RoomCodeLength)),
 		)
 		return
 	}
-	if len(roomCodeStr) != utils.RoomCodeLength {
-		ws.WriteMessage(
-			websocket.TextMessage,
-			[]byte(fmt.Sprintf("Provide a %d digit room code\n", utils.RoomCodeLength)),
-		)
-		return
-	}
+
+	roomCode := RoomID(roomCodeInt)
 	if rooms[roomCode] == nil {
 		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist\n"))
 		close(*channels[roomCode])
@@ -135,7 +137,7 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleRoom(roomCode int) {
+func handleRoom(roomCode RoomID) {
 	room := rooms[roomCode]
 	channel := *channels[roomCode]
 

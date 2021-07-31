@@ -4,16 +4,16 @@ import (
 	"math"
 	"math/rand"
 	"time"
-)
 
-const RoomCodeLength = 4
+	. "github.com/tusharsadhwani/recv/constants"
+)
 
 var seed = rand.NewSource(time.Now().UnixNano())
 var rng = rand.New(seed)
 
-func GenerateRoomCode() int {
+func GenerateRoomCode() RoomID {
 	lowerLimit := int(math.Pow10(RoomCodeLength - 1))
 	upperLimit := int(math.Pow10(RoomCodeLength))
 	roomCode := lowerLimit + rng.Intn(upperLimit-lowerLimit)
-	return roomCode
+	return RoomID(roomCode)
 }

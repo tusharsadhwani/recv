@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/websocket"
-	"github.com/tusharsadhwani/recv/utils"
+	. "github.com/tusharsadhwani/recv/constants"
 )
 
 func main() {
@@ -22,13 +22,13 @@ func main() {
 		roomCode = createRoom()
 	} else {
 		var err error
-		if len(cfg.roomCode) != utils.RoomCodeLength {
-			fmt.Printf("Provide a %d digit room code\n", utils.RoomCodeLength)
+		if len(cfg.roomCode) != RoomCodeLength {
+			fmt.Printf("Provide a %d digit room code\n", RoomCodeLength)
 			return
 		}
 		roomCode, err = strconv.Atoi(cfg.roomCode)
 		if err != nil {
-			fmt.Printf("Provide a %d digit room code\n", utils.RoomCodeLength)
+			fmt.Printf("Provide a %d digit room code\n", RoomCodeLength)
 			return
 		}
 	}
