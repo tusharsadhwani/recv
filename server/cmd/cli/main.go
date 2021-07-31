@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/websocket"
-	. "github.com/tusharsadhwani/recv/constants"
+	. "github.com/tusharsadhwani/recv/constants" //lint:ignore ST1001 importing constants
 )
 
 func main() {
