@@ -53,6 +53,25 @@ func HandleConnect(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func WebsocketEcho(w http.ResponseWriter, r *http.Request) {
+	ws, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer ws.Close()
+
+	for {
+		_, msg, err := ws.ReadMessage()
+		if err != nil {
+			log.Printf("error while reading message: %v", err)
+			ws.Close()
+			break
+		}
+
+		ws.WriteMessage(websocket.TextMessage, msg)
+	}
+}
+
 func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

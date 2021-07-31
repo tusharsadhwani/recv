@@ -19,6 +19,7 @@ func RunServer() {
 	port := getPort()
 
 	http.HandleFunc("/connect", recv.HandleConnect)
+	http.HandleFunc("/echo", recv.WebsocketEcho)
 	http.HandleFunc("/ws", recv.HandleWebsockets)
 	http.Handle("/", http.FileServer(http.Dir("../web")))
 
