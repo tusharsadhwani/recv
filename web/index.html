@@ -85,6 +85,8 @@
     const form = document.getElementById('form')
     const textarea = document.getElementById('textarea')
 
+    let ws = null
+
     // Drag and drop support
     msgbox.ondragover = event => {
       event.preventDefault()
@@ -109,19 +111,22 @@
           body: file.name,
         })
         const preSignedUrl = await response.text()
-        console.log(preSignedUrl)
 
         const uploadResponse = await fetch(preSignedUrl, {
           method: 'put',
           body: reader.result,
         })
-        console.log(uploadResponse)
+
+        const fileUrl = new URL(preSignedUrl)
+        fileUrl.search = ''
+        const text = fileUrl.href + '\n'
+        ws.send(text)
+        msgbox.textContent += text
+
         droptarget.style.opacity = 0
         droptarget.textContent = 'Drop Files to upload...'
       })
     }
-
-    let ws = null
 
     // Pages, Interactivity Setup
     const createRoom = async () => {
