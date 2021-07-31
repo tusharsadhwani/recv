@@ -42,9 +42,17 @@
     <div id="chatbox" class="page hidden">
       <h1>msgbox</h1>
       <div class="main">
-        <div id="msgbox" class="scrollable"></div>
+        <div id="msgbox-container" class="scrollable">
+          <div id="msgbox"></div>
+          <div id="droptarget">Drop Files to upload...</div>
+        </div>
         <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendText(event)">
-          <textarea id="textarea" class="scrollable" oninput="resizeTextArea(event)"></textarea>
+          <textarea
+            id="textarea"
+            class="scrollable"
+            placeholder="Ctrl+Enter to send"
+            oninput="resizeTextArea(event)"
+          ></textarea>
           <button class="flat-btn tiny" style="padding-left: 1rem">Send</button>
         </form>
         <button class="flat-btn" style="margin-top: 0.5rem" onclick="closeMsgbox()">Go Back</button>
@@ -73,8 +81,45 @@
     const joincode = document.getElementById('joincode')
     const chatbox = document.getElementById('chatbox')
     const msgbox = document.getElementById('msgbox')
+    const droptarget = document.getElementById('droptarget')
     const form = document.getElementById('form')
     const textarea = document.getElementById('textarea')
+
+    // Drag and drop support
+    msgbox.ondragover = event => {
+      event.preventDefault()
+    }
+    msgbox.ondragenter = event => {
+      droptarget.style.opacity = 1
+    }
+    msgbox.ondragleave = event => {
+      droptarget.style.opacity = 0
+    }
+    msgbox.ondrop = event => {
+      event.preventDefault()
+
+      const file = event.dataTransfer.files[0]
+      const reader = new FileReader()
+      reader.readAsArrayBuffer(file)
+      droptarget.textContent = 'Uploading...'
+
+      reader.addEventListener('loadend', async () => {
+        const response = await fetch(`${httpdomain}/upload`, {
+          method: 'post',
+          body: file.name,
+        })
+        const preSignedUrl = await response.text()
+        console.log(preSignedUrl)
+
+        const uploadResponse = await fetch(preSignedUrl, {
+          method: 'put',
+          body: reader.result,
+        })
+        console.log(uploadResponse)
+        droptarget.style.opacity = 0
+        droptarget.textContent = 'Drop Files to upload...'
+      })
+    }
 
     let ws = null
 
