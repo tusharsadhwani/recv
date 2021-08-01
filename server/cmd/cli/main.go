@@ -7,7 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -93,9 +95,64 @@ func writeMessages(conn *websocket.Conn) {
 	for {
 		text, _ := input.ReadBytes('\n')
 		text = bytes.TrimRight(text, "\n")
+
+		// File upload
+		filePrefix := []byte("@file ")
+		if bytes.HasPrefix(text, filePrefix) {
+			fileBytes := bytes.SplitN(text, []byte(" "), 2)[1]
+			fileBytes = bytes.Trim(fileBytes, " '")
+			filePath := string(fileBytes)
+
+			fileUrl := uploadFile(filePath)
+			conn.WriteMessage(websocket.TextMessage, []byte(fileUrl))
+			continue
+		}
+
 		err := conn.WriteMessage(websocket.TextMessage, text)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+}
+
+// TODO: refactor
+func uploadFile(filePath string) string {
+	fileName := path.Base(filePath)
+	fmt.Printf("uploading %s...", fileName)
+
+	cfg := GetConfig()
+	uploadUrl := fmt.Sprintf("%s://%s/upload", cfg.scheme, cfg.domain)
+	response, err := http.Post(uploadUrl, "text/plain", strings.NewReader(fileName))
+	if err != nil {
+		fmt.Println("Some error occured.")
+	}
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Some error occured.")
+	}
+	preSignedUrl := string(body)
+	requestURL, err := url.Parse(preSignedUrl)
+	if err != nil {
+		fmt.Println("Some error occured.")
+	}
+	fileData, err := os.Open(filePath)
+	if err != nil {
+		fmt.Println("Some error occured.")
+	}
+	fileInfo, err := fileData.Stat()
+	if err != nil {
+		fmt.Println("Some error occured.")
+	}
+	fileSize := fileInfo.Size()
+	request := http.Request(http.Request{
+		Method:        http.MethodPut,
+		URL:           requestURL,
+		Body:          fileData,
+		ContentLength: fileSize,
+	})
+	http.DefaultClient.Do(&request)
+
+	fileUrl := strings.SplitN(preSignedUrl, "?", 2)[0]
+	fmt.Println("\rSent link: " + fileUrl)
+	return fileUrl
 }
