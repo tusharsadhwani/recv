@@ -150,6 +150,7 @@
         }
       }
       ws.onmessage = addMessage
+      // TODO: add onclose, for error handling
     }
     const createRoomAndConnect = async text => {
       const roomCode = await createRoom()
