@@ -106,7 +106,7 @@ func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	roomCode := RoomID(roomCodeInt)
 	if rooms[roomCode] == nil {
 		ws.WriteMessage(websocket.TextMessage, []byte("This room doesn't exist\n"))
-		close(*channels[roomCode])
+		close(*channels[roomCode]) // TODO: fix nil pointer dereference error here
 		delete(rooms, roomCode)
 		delete(channels, roomCode)
 		return
