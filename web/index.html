@@ -46,7 +46,7 @@
           <div id="msgbox"></div>
           <div id="droptarget">Drop Files to upload...</div>
         </div>
-        <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendText(event)">
+        <form id="form" class="input" onkeydown="checkSubmit(event)" onsubmit="sendMessage(event)">
           <textarea
             id="textarea"
             class="scrollable"
@@ -61,8 +61,8 @@
   </body>
   <script>
     // Initial Setup
-    const DOMAIN = 'recv.live'
-    const SECURE = true
+    const DOMAIN = 'localhost:8000'
+    const SECURE = false
 
     const scheme = SECURE ? 'https' : 'http'
     const wsscheme = SECURE ? 'wss' : 'ws'
@@ -86,6 +86,7 @@
     const textarea = document.getElementById('textarea')
 
     let ws = null
+    let imageDomain = null
 
     // Drag and drop support
     msgbox.ondragover = event => {
@@ -119,9 +120,7 @@
 
         const fileUrl = new URL(preSignedUrl)
         fileUrl.search = ''
-        const text = fileUrl.href + '\n'
-        ws.send(text)
-        msgbox.textContent += text
+        sendLink(fileUrl.href)
 
         droptarget.style.opacity = 0
         droptarget.textContent = 'Drop Files to upload...'
@@ -136,18 +135,36 @@
 
       const resp = await fetch(`${httpdomain}/connect`)
       const roomCode = await resp.text()
+
       return roomCode
     }
 
-    const connect = roomCode => {
+    const connect = async (roomCode, text) => {
+      await setupImageDomain()
+
       code.textContent = roomCode
       ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
-      ws.onmessage = newMessage
+      if (text) {
+        ws.onopen = () => {
+          addText(text)
+        }
+      }
+      ws.onmessage = addMessage
     }
-
-    const createRoomAndConnect = async () => {
+    const createRoomAndConnect = async text => {
       const roomCode = await createRoom()
-      connect(roomCode)
+      await connect(roomCode, text)
+    }
+    const setupImageDomain = async () => {
+      // Get a fake pre-signed URL to get S3 hostname
+      const response = await fetch(`${httpdomain}/upload`, {
+        method: 'post',
+        body: 'test',
+      })
+      const preSignedUrl = await response.text()
+      const fileUrl = new URL(preSignedUrl)
+
+      imageDomain = fileUrl.host
     }
 
     const showJoinScreen = () => {
@@ -204,38 +221,54 @@
       if (event.ctrlKey && event.keyCode === 13) form.dispatchEvent(new Event('submit'))
     }
 
-    const sendText = event => {
+    const sendMessage = event => {
       event.preventDefault()
-      const text = textarea.value.trimEnd() + '\n'
-      ws.send(text)
-      msgbox.textContent += text
+      const text = textarea.value.trimEnd()
+      sendText(text)
 
       textarea.value = ''
       resizeTextArea()
     }
-
-    const newMessage = event => {
-      msgbox.textContent += event.data
+    const addMessage = event => {
+      const data = event.data
+      if (data.includes(imageDomain)) {
+        addLink(data)
+      } else {
+        addText(data)
+      }
+    }
+    const sendText = text => {
+      ws.send(text)
+      addText(text)
+    }
+    const addText = text => {
+      const textLine = document.createElement('div')
+      textLine.textContent += text
+      msgbox.appendChild(textLine)
+    }
+    const sendLink = link => {
+      ws.send(link)
+      addLink(link)
+    }
+    const addLink = link => {
+      const linkBlock = document.createElement('div')
+      linkBlock.textContent = 'Uploaded file: '
+      const linkTag = document.createElement('a')
+      linkTag.href = link
+      linkTag.textContent = 'Click to download'
+      linkBlock.appendChild(linkTag)
+      msgbox.appendChild(linkBlock)
     }
 
     // Handling web share via PWA
     const webShare = async text => {
-      text = text.trimEnd() + '\n'
-
-      const roomCode = await createRoom()
-      code.textContent = roomCode
-      ws = new WebSocket(`${wsdomain}/ws?code=${roomCode}`)
-      ws.onopen = () => {
-        ws.send(text)
-        msgbox.textContent += text
-      }
-      ws.onmessage = newMessage
+      createRoomAndConnect(text)
     }
 
     const parsedUrl = new URL(window.location)
     const text = parsedUrl.searchParams.get('text')
     if (text) {
-      webShare(text)
+      webShare(text.trimEnd())
     }
 
     // Service worker, for the PWA to work

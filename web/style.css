@@ -220,6 +220,8 @@ h1 {
 #msgbox {
   padding-top: 4px;
   padding-left: 4px;
+}
+#msgbox * {
   font-size: 1.125rem;
   line-height: 1.25rem;
   font-family: 'Inconsolata', 'Courier New', Courier, monospace;
