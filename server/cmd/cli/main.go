@@ -2,12 +2,14 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	. "github.com/tusharsadhwani/recv/constants" //lint:ignore ST1001 importing constants
@@ -37,15 +39,7 @@ func main() {
 
 	fmt.Println("Your Room code is:", roomCode)
 	go readMessages(conn)
-
-	input := bufio.NewReader(os.Stdin)
-	for {
-		text, _ := input.ReadString('\n')
-		err := conn.WriteMessage(websocket.TextMessage, []byte(text))
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	writeMessages(conn)
 }
 
 func createRoom() int {
@@ -80,10 +74,28 @@ func connect(roomCode int) *websocket.Conn {
 
 func readMessages(conn *websocket.Conn) {
 	for {
-		_, msg, err := conn.ReadMessage()
+		_, msgBytes, err := conn.ReadMessage()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s", msg)
+
+		msg := string(msgBytes)
+		if strings.HasPrefix(msg, "https://") {
+			fmt.Println("Received link: " + msg)
+		} else {
+			fmt.Println(msg)
+		}
+	}
+}
+
+func writeMessages(conn *websocket.Conn) {
+	input := bufio.NewReader(os.Stdin)
+	for {
+		text, _ := input.ReadBytes('\n')
+		text = bytes.TrimRight(text, "\n")
+		err := conn.WriteMessage(websocket.TextMessage, text)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
