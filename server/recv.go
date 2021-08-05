@@ -56,7 +56,7 @@ func HandleConnect(w http.ResponseWriter, r *http.Request) {
 func WebsocketEcho(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	defer ws.Close()
 
@@ -75,7 +75,7 @@ func WebsocketEcho(w http.ResponseWriter, r *http.Request) {
 func HandleWebsockets(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Fatal(err)
+		return
 	}
 	defer ws.Close()
 
